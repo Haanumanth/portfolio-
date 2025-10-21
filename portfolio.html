@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive Portfolio — Pandu</title>
+  <meta name="description" content="Interactive developer portfolio showcasing skills, projects, and contact." />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#7c3aed; --glass: rgba(255,255,255,0.04);
+      --max-w:1100px; --radius:14px; --gap:18px; --mono: 'SFMono-Regular', ui-monospace, Menlo, monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent 8%),
+                  linear-gradient(180deg,#071028 0%, #071426 60%);
+      color:#e6eef8; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding:36px; display:flex; justify-content:center;
+    }
+    .wrap{width:100%; max-width:var(--max-w);}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#2dd4bf);display:flex;align-items:center;justify-content:center;font-weight:700;color:#071426}
+    h1{margin:0;font-size:22px}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+
+    .controls{display:flex;gap:10px;align-items:center}
+    .search{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;color:var(--muted);min-width:220px}
+    .btn{background:linear-gradient(90deg,var(--accent),#06b6d4);border:none;padding:8px 12px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+
+    main{display:grid;grid-template-columns:1fr 360px;gap:24px}
+
+    /* Projects column */
+    .projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:16px; box-shadow: 0 6px 20px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.03)}
+    .card h3{margin:0 0 6px 0;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+    .tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted)}
+    .card .actions{display:flex;gap:8px;margin-top:12px}
+    .small{font-size:13px;padding:6px 10px;border-radius:8px}
+
+    /* Sidebar */
+    aside{position:relative}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:16px; border:1px solid rgba(255,255,255,0.03); box-shadow: 0 6px 20px rgba(2,6,23,0.6)}
+    .skills{display:flex;flex-wrap:wrap;gap:8px}
+    .skill{background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent);padding:8px 10px;border-radius:8px;font-weight:600;font-size:13px}
+    .meter{height:8px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden}
+    .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#06b6d4);border-radius:8px;transition:width 600ms cubic-bezier(.2,.9,.2,1)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:60}
+    .modal{width:min(760px,96%);border-radius:12px;padding:22px;background:linear-gradient(180deg,#081025,#041022);border:1px solid rgba(255,255,255,0.04)}
+    .modal h2{margin-top:0}
+
+    /* Footer / contact */
+    .contact{display:flex;flex-direction:column;gap:10px}
+    label{font-size:13px;color:var(--muted)}
+    input,textarea{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:inherit}
+
+    /* responsive */
+    @media (max-width:900px){main{grid-template-columns:1fr} aside{order:2} header{flex-direction:column;align-items:flex-start}}
+
+    /* tiny animations */
+    .card:hover{transform:translateY(-6px);transition:transform 240ms ease}
+    .logo{transition:transform 300ms ease}
+    .logo:hover{transform:rotate(-6deg) scale(1.04)}
+
+    /* helper */
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">P</div>
+        <div>
+          <h1>Hanumantha Rao — Software Engineer</h1>
+          <p class="lead">Full‑stack developer focused on MERN, real‑time apps, and data visualization.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <input id="search" class="search" placeholder="Search projects or skills..." />
+        <button id="themeBtn" class="ghost" title="Toggle theme">Toggle</button>
+        <a class="btn" href="#contact">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <h2 style="margin:0">Selected Projects</h2>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="filterSelect" class="ghost small">
+              <option>All</option>
+              <option>MERN</option>
+              <option>Socket.IO</option>
+              <option>Algorithms</option>
+              <option>Research</option>
+            </select>
+            <button id="shuffle" class="ghost small">Shuffle</button>
+          </div>
+        </div>
+
+        <div id="projects" class="projects" aria-live="polite"></div>
+      </section>
+
+      <aside>
+        <div class="panel">
+          <h3 style="margin-top:0">Skills</h3>
+          <div class="skills" id="skills"></div>
+          <div style="height:12px"></div>
+          <!-- <h4 style="margin:0 0 8px 0">Experience & Summary</h4> -->
+          <!-- <p class="muted" style="font-size:13px">5+ years building web apps, APIs, and data tools. Comfortable with system design, performance tuning, and producing readable code.</p> -->
+          <div style="height:12px"></div>
+          <div class="contact-panel">
+            <h4 style="margin:0 0 8px 0">Other Links</h4>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <a class="ghost small" href="#">Resume</a>
+              <a class="ghost small" href="#">GitHub</a>
+              <a class="ghost small" href="#">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:18px"></div>
+        <div class="panel" id="contact">
+          <h3 style="margin-top:0">Contact</h3>
+          <form id="contactForm" class="contact">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" required />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" type="email" required />
+            </div>
+            <div>
+              <label for="message">Message</label>
+              <textarea id="message" rows="4"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button type="submit" class="btn">Send</button>
+              <button type="button" id="resetBtn" class="ghost">Reset</button>
+            </div>
+            <div id="formStatus" class="muted" style="font-size:13px"></div>
+          </form>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Modal placeholder -->
+  <div id="modalRoot"></div>
+
+  <script>
+    /* Data: skills and projects */
+    const projects = [
+      {id:1, title:'MERN E‑commerce', tags:['MERN','Research'], summary:'Full‑stack e‑commerce app with product catalog, cart, and Stripe integration.', details:'React + Redux, Node/Express API, MongoDB, JWT auth, admin panel.'},
+      {id:2, title:'Real‑time Chat App', tags:['Socket.IO','MERN'], summary:'Group chat with typing indicators and presence.', details:'Socket.IO for real‑time comms, message persistence, responsive UI.'},
+      {id:3, title:'LeetCode Practice Suite', tags:['Algorithms'], summary:'Dashboard to track algorithm practice and solutions.', details:'Problem tracker, difficulty filter, solution snippets in Java and JS.'},
+      {id:4, title:'Concrete Research Dashboard', tags:['Research','Data Viz'], summary:'Analyzing marble dust as partial cement replacement.', details:'CSV import, charts comparing compressive strength and cost analysis.'},
+      {id:5, title:'Portfolio Generator', tags:['MERN'], summary:'Tool to quickly generate static portfolios from JSON.', details:'CLI and small web UI to export static sites; templating and theme options.'}
+    ];
+
+    const skills = [
+      {name:'JavaScript', level:90}, {name:'React', level:85}, {name:'Node.js', level:82}, {name:'MongoDB', level:78},
+      {name:'Socket.IO', level:70}, {name:'Python', level:66}, {name:'Algorithms', level:82}, {name:'Data Viz', level:64}
+    ];
+
+    /* Renderers */
+    const projectsRoot = document.getElementById('projects');
+    const skillsRoot = document.getElementById('skills');
+
+    function createProjectCard(p){
+      const el = document.createElement('article');
+      el.className='card';
+      el.innerHTML = `
+        <h3>${p.title}</h3>
+        <p>${p.summary}</p>
+        <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="actions">
+          <button class="small" data-id="${p.id}" aria-haspopup="dialog">Details</button>
+          <a class="small ghost" href="#" onclick="event.preventDefault();alert('Live demo placeholder')">Demo</a>
+          <a class="small ghost" href="#" onclick="event.preventDefault();alert('Repo placeholder')">Repo</a>
+        </div>
+      `;
+      el.querySelector('button').addEventListener('click', ()=>openModal(p));
+      return el;
+    }
+
+    function renderProjects(list){
+      projectsRoot.innerHTML='';
+      if(list.length===0){
+        projectsRoot.innerHTML = '<div class="muted">No projects match that filter.</div>';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      list.forEach(p=>frag.appendChild(createProjectCard(p)));
+      projectsRoot.appendChild(frag);
+    }
+
+    function renderSkills(){
+      skillsRoot.innerHTML='';
+      skills.forEach(s=>{
+        const el = document.createElement('div');
+        el.style.width='100%';
+        el.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div class="skill">${s.name}</div>
+            <div class="muted" style="font-size:13px">${s.level}%</div>
+          </div>
+          <div class="meter" aria-hidden="true"><i style="width:0%"></i></div>
+        `;
+        skillsRoot.appendChild(el);
+        // animate meter
+        requestAnimationFrame(()=>{
+          const bar = el.querySelector('i');
+          bar.style.width = s.level + '%';
+        })
+      })
+    }
+
+    /* Modal */
+    function openModal(project){
+      const root = document.getElementById('modalRoot');
+      const backdrop = document.createElement('div');
+      backdrop.className='modal-backdrop';
+      backdrop.innerHTML = `
+        <div class="modal" role="dialog" aria-modal="true">
+          <button aria-label="Close" id="closeModal" class="ghost small" style="float:right">Close</button>
+          <h2>${project.title}</h2>
+          <p class="muted">${project.summary}</p>
+          <p style="margin-top:12px">${project.details}</p>
+          <div style="margin-top:12px" class="tags">${project.tags.map(t=>`<span class='tag'>${t}</span>`).join('')}</div>
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+            <a class="btn" href="#" onclick="event.preventDefault();alert('Open demo placeholder')">Open Demo</a>
+            <a class="ghost" href="#" onclick="event.preventDefault();alert('Open repo placeholder')">View Repo</a>
+          </div>
+        </div>
+      `;
+      backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) closeModal(); });
+      root.appendChild(backdrop);
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      const root = document.getElementById('modalRoot');
+      root.innerHTML='';
+      document.body.style.overflow='auto';
+    }
+
+    /* Filters, search, shuffle */
+    const filterSelect = document.getElementById('filterSelect');
+    const searchInput = document.getElementById('search');
+    const shuffleBtn = document.getElementById('shuffle');
+
+    function applyFilters(){
+      const f = filterSelect.value;
+      const q = searchInput.value.trim().toLowerCase();
+      let res = projects.slice();
+      if(f !== 'All') res = res.filter(p=>p.tags.includes(f));
+      if(q) res = res.filter(p=> (p.title+p.summary+p.tags.join(' ')).toLowerCase().includes(q));
+      renderProjects(res);
+    }
+    filterSelect.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
+    shuffleBtn.addEventListener('click', ()=>{
+      for(let i=projects.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [projects[i],projects[j]]=[projects[j],projects[i]]; }
+      applyFilters();
+    });
+
+    /* Theme toggle */
+    const themeBtn = document.getElementById('themeBtn');
+    let dark = true;
+    themeBtn.addEventListener('click', ()=>{
+      dark = !dark;
+      if(!dark){
+        document.documentElement.style.setProperty('--bg','#f7fafc');
+        document.documentElement.style.setProperty('--card','#ffffff');
+        document.body.style.color='#061126';
+      } else {
+        document.documentElement.style.removeProperty('--bg');
+        document.documentElement.style.removeProperty('--card');
+        document.body.style.color='';
+      }
+    });
+
+    /* Contact form (fake) */
+    const form = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+    form.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      formStatus.textContent = 'Sending...';
+      // Simulate network
+      setTimeout(()=>{ formStatus.textContent = 'Message sent — thanks! I will reply to your email.'; form.reset(); }, 900);
+    });
+    document.getElementById('resetBtn').addEventListener('click', ()=>{ form.reset(); formStatus.textContent=''; });
+
+    // Initial render
+    renderSkills(); renderProjects(projects);
+  </script>
+</body>
+</html>
